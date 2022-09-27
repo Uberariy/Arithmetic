@@ -1,10 +1,12 @@
 /**
  * @file Rational_number.hpp
- * @author Uberariy (you@domain.com)
+ * @author Uberariy
  * @brief Rational_number class header
  * @version 0.1
  * @date 2022-09-24
- * 
+ *
+ * @copyright Copyright (c) 2022
+ *
  */
 
 #ifndef ARITHMETIC_RATIONAL_NUMBER_

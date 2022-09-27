@@ -1,10 +1,12 @@
 /**
  * @file Rational_number.cpp
- * @author your name (you@domain.com)
+ * @author Uberariy
  * @brief Rational_number class methods implementation
  * @version 0.1
  * @date 2022-09-24
- * 
+ *
+ * @copyright Copyright (c) 2022
+ *
  */
 
 #include "Rational_number.hpp"
