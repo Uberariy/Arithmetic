@@ -1,7 +1,7 @@
 /**
  * @file Vector.cpp
- * @author your name (you@domain.com)
- * @brief 
+ * @author Uberariy
+ * @brief Vector class methods implementation
  * @version 0.1
  * @date 2022-09-26
  * 

@@ -1,7 +1,7 @@
 /**
  * @file Vector.hpp
- * @author your name (you@domain.com)
- * @brief 
+ * @author Uberariy
+ * @brief Vector class header
  * @version 0.1
  * @date 2022-09-26
  * 
