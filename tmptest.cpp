@@ -14,8 +14,8 @@
 #include "lib/Vector.cpp"
 
 int main() {
-    // Rational_number a1(10);
-    // Rational_number a2(10, 2);
+    Rational_number a1(1, 10);
+    Rational_number a2(1, 10);
     // Rational_number a3("15 ", " 2");
     // Rational_number a4(" +20 /    2");
 
@@ -28,6 +28,7 @@ int main() {
 
     // std::string b(a1);
     // std::cout << a5 << "\n" << a6 << "\n" << a7 << "\n" << a8 << "\n";
+    std::cout << a1 << "\n" << (long double)(a1) << "\n";
 
     // std::string s;
     // std::cin >> s;
@@ -45,9 +46,9 @@ int main() {
     a12.make_canonical();
     // std::cout << a10 << "\n" << short(a10) << "\n" << a12 << "\n" << (Rational_number(SHRT_MIN) < a10) << "\n";
     Rational_number a11(1, 4);
-    std::cout << a11.round() << "\t" << a11.floor() << "\t" << (a11 + a11).round() << "\t" << (a11 + a11).floor() << "\n";
+    // std::cout << a11.round() << "\t" << a11.floor() << "\t" << (a11 + a11).round() << "\t" << (a11 + a11).floor() << "\n";
 
-    Vector<int> v(5, 0.001, true, a10);
+    Vector<Rational_number> v(5, 0.001, true, Rational_number(1, 999));
     std::cout << v;
 
     return 0;

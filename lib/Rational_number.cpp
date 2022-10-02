@@ -26,22 +26,39 @@ Rational_number::Rational_number(long long int lop, unsigned long long int rop) 
 Rational_number::Rational_number(const char* op) {
     std::string s = std::string(op);
     auto pos = s.find("/"); 
-    if (s.substr(0, pos).empty() or std::string::npos == pos) {
-        throw std::runtime_error("Invalid rational number format: '" + s + "'");
+    if (std::string::npos == pos) {
+        pos = s.find(".");
+        if (std::string::npos == pos) {
+            numerator = std::stoll(s);
+            denominator = 1;
+        } else {
+            long double fl = std::atof(op);
+            denominator = 1;
+            while (fl - (long long int)fl >= 1e-10) {
+                fl *= 10;
+                denominator *= 10;
+            }
+            numerator = fl;
+        }
+    } else {
+        if (s.substr(0, pos).empty()) {
+            throw std::runtime_error("Invalid rational number format: '" + s + "'");
+        }
+        auto lopa = std::stoll(s.substr(0, pos));
+        s.erase(0, pos + 1);
+        if (s.empty()) {
+            throw std::runtime_error("Invalid rational number format: '" + std::string(op) + "'");
+        }
+        auto ropa = std::stoll(s);
+        if (ropa == 0) {
+            throw DivisionByZeroException("Denominator cannot equal to zero.");
+        } else if (ropa < 0) {
+            throw std::runtime_error("Invalid rational number format: '" + std::string(op) + "'");
+        }
+        numerator = lopa;
+        denominator = ropa;
     }
-    auto lopa = std::stoll(s.substr(0, pos));
-    s.erase(0, pos + 1);
-    if (s.empty()) {
-        throw std::runtime_error("Invalid rational number format: '" + std::string(op) + "'");
-    }
-    auto ropa = std::stoll(s);
-    if (ropa == 0) {
-        throw DivisionByZeroException("Denominator cannot equal to zero.");
-    } else if (ropa < 0) {
-        throw std::runtime_error("Invalid rational number format: '" + std::string(op) + "'");
-    }
-    numerator = lopa;
-    denominator = ropa;
+    make_canonical();
 }
 
 Rational_number::Rational_number(const char* lop, const char* rop) {
@@ -118,20 +135,20 @@ Rational_number& Rational_number::operator/=(const Rational_number &op) {
     return *this;
 }
 
-Rational_number Rational_number::operator+(const Rational_number& op) {
-    return *this += op;
+Rational_number operator+(Rational_number lop, const Rational_number& rop) {
+    return lop += rop;
 }
 
-Rational_number Rational_number::operator-(const Rational_number& op) {
-    return *this -= op;
+Rational_number operator-(Rational_number lop, const Rational_number& rop) {
+    return lop -= rop;
 }
 
-Rational_number Rational_number::operator*(const Rational_number& op) {
-    return *this *= op;
+Rational_number operator*(Rational_number lop, const Rational_number& rop) {
+    return lop *= rop;
 }
 
-Rational_number Rational_number::operator/(const Rational_number& op) {
-    return *this /= op;
+Rational_number operator/(Rational_number lop, const Rational_number& rop) {
+    return lop /= rop;
 }
 
 Rational_number& Rational_number::operator++(int op) {
@@ -143,7 +160,7 @@ Rational_number& Rational_number::operator--(int op) {
 }
 
 std::ostream& operator<< (std::ostream& os, Rational_number const& op) {
-    os << std::string(op);
+    os << (std::to_string(op.numerator) + "/" + std::to_string(op.denominator));
     return os;
 }
 
@@ -188,7 +205,13 @@ bool operator>=(const Rational_number& lop, const Rational_number& rop) {
 }
 
 Rational_number::operator std::string() const {
-    return std::to_string(numerator) + "/" + std::to_string(denominator);
+    long double fl = numerator / denominator;
+    return std::to_string(fl);
+}
+
+Rational_number::operator long double() const {
+    long double fl = (long double)numerator / (long double)denominator;
+    return fl;
 }
 
 Rational_number::operator long long() const {

@@ -62,6 +62,13 @@ public:
     Rational_number(const char* lop, const char* rop);
 
     /**
+     * @brief Construct a new Rational_number object
+     * 
+     * @param op
+     */
+    // Rational_number(const long double op);
+
+    /**
      * @brief Assignment operator
      * 
      * @param op 
@@ -137,7 +144,7 @@ public:
      * @param op 
      * @return Rational_number 
      */
-    Rational_number operator+(const Rational_number& op);
+    friend Rational_number operator+(Rational_number lop, const Rational_number& rop);
 
     /**
      * @brief Minus operator
@@ -145,7 +152,7 @@ public:
      * @param op 
      * @return Rational_number 
      */
-    Rational_number operator-(const Rational_number& op);
+    friend Rational_number operator-(Rational_number lop, const Rational_number& rop);
 
     /**
      * @brief Multiplication operator
@@ -153,7 +160,7 @@ public:
      * @param op 
      * @return Rational_number 
      */
-    Rational_number operator*(const Rational_number& op);
+    friend Rational_number operator*(Rational_number lop, const Rational_number& rop);
 
     /**
      * @brief Division operator
@@ -161,7 +168,7 @@ public:
      * @param op 
      * @return Rational_number 
      */
-    Rational_number operator/(const Rational_number& op);
+    friend Rational_number operator/(Rational_number lop, const Rational_number& rop);
 
     /**
      * @brief Incrementation operator
@@ -263,6 +270,13 @@ public:
      * @return std::string 
      */
     operator std::string() const;
+
+    /**
+     * @brief Cast rational number to long long
+     * 
+     * @return long double
+     */
+    operator long double() const;
 
     /**
      * @brief Cast rational number to long long

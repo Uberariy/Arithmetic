@@ -13,6 +13,7 @@
 #define ARITHMETIC_VECTOR_
 
 #include <map>
+#include <set>
 #include <fstream>
 #include <sstream>
 
@@ -45,6 +46,7 @@ public:
             for (key = 1; key < length_ + 1; key++) {
                 data_map[key] = start_value_all;
             }
+            delete_null_elements();
         }
     }
 
@@ -87,7 +89,7 @@ private:
 
     double epsilon_tresh;
 
-    static constexpr double default_epsilon_tresh = 0.00000001;
+    static constexpr double default_epsilon_tresh = 0.000001;
 
     /**
      * @brief Vector can contain less elements, than length, but it is constraint on max size
@@ -99,7 +101,18 @@ private:
 
     std::map<unsigned long long, T> data_map;
 
-
+    Vector& delete_null_elements() {
+        std::set<unsigned long long> null_keys;
+        for (auto [key, val]: data_map) {
+            if (((long double)val < epsilon_tresh) && 
+                ((long double)val > -epsilon_tresh))
+                null_keys.insert(key);
+        } 
+        for (const int &key : null_keys) {
+            data_map.erase(key);
+        }
+        return *this;
+    }
 
 };
 
