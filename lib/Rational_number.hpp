@@ -37,21 +37,59 @@ public:
      * 
      * @param op Numerator (denominator gets 1)
      */
-    Rational_number(long long int op);
+    Rational_number(const signed long long int op);
+
+    /**
+     * @brief Construct a new Rational_number object
+     * 
+     * @param op Numerator (denominator gets 1)
+     */
+    Rational_number(const signed long int op);
+
+    /**
+     * @brief Construct a new Rational_number object
+     * 
+     * @param op Numerator (denominator gets 1)
+     */
+    Rational_number(const signed int op);
+
     /**
      * @brief Construct a new Rational_number object
      * 
      * @param lop Numerator
      * @param rop Denominator object
      */
-    Rational_number(long long int lop, unsigned long long int rop);
+    Rational_number(const signed long long int lop, const unsigned long long int rop);
 
     /**
      * @brief Construct a new Rational_number object
      * 
-     * @param op Numerator (denominator gets 1) 
+     * @param lop Numerator
+     * @param rop Denominator object
+     */
+    Rational_number(const signed long int lop, const unsigned long int rop);
+
+    /**
+     * @brief Construct a new Rational_number object
+     * 
+     * @param lop Numerator
+     * @param rop Denominator object
+     */
+    Rational_number(const signed int lop, const unsigned int rop);
+
+    /**
+     * @brief Construct a new Rational_number object
+     * 
+     * @param op
      */
     Rational_number(const char* op);
+
+    /**
+     * @brief Construct a new Rational_number object
+     * 
+     * @param op
+     */
+    Rational_number(const std::string op);
 
     /**
      * @brief Construct a new Rational_number object
@@ -66,7 +104,21 @@ public:
      * 
      * @param op
      */
-    // Rational_number(const long double op);
+    Rational_number(const long double op);
+
+    /**
+     * @brief Construct a new Rational_number object
+     * 
+     * @param op Numerator (denominator gets 1) 
+     */
+    Rational_number(const double op);
+
+    /**
+     * @brief Construct a new Rational_number object
+     * 
+     * @param op Numerator (denominator gets 1) 
+     */
+    Rational_number(const float op);
 
     /**
      * @brief Assignment operator
@@ -327,20 +379,6 @@ public:
      * @return Rational_number& 
      */
     Rational_number& round();
-
-private:
-    /**
-     * @brief Rational number nominator
-     * 
-     */
-    long long numerator;
-
-    /**
-     * @brief Rational number denominator
-     * 
-     */
-    unsigned long long denominator;
-
     /**
      * @brief Set the numerator object
      * 
@@ -368,6 +406,19 @@ private:
      * @return long long int 
      */
     long long int get_denominator();
+    
+private:
+    /**
+     * @brief Rational number nominator
+     * 
+     */
+    long long numerator;
+
+    /**
+     * @brief Rational number denominator
+     * 
+     */
+    unsigned long long denominator;
 
     /**
      * @brief Cast to undivided type (etc.: int, long, long long, short)

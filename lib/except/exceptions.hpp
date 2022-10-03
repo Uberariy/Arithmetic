@@ -62,3 +62,20 @@ public:
         return message;
     }
 };
+
+/**
+ * @brief Exception, that is thrown when we get wrong type format
+ * 
+ */
+class WrongFormatException :std::exception {
+private:
+    const char* message;
+
+public:
+    WrongFormatException() : message("Got wrong format of some type.") {}
+    explicit WrongFormatException(const char* msg) : message(msg) {}
+    explicit WrongFormatException(const std::string& msg) : message(msg.c_str()) {}
+    const char* what () {
+        return message;
+    }
+};

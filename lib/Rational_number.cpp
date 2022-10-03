@@ -13,14 +13,37 @@
 
 Rational_number::Rational_number():numerator(1), denominator(1) {}
 
-Rational_number::Rational_number(long long int op):numerator(op), denominator(1) {}
+Rational_number::Rational_number(const signed long long int op):numerator(op), denominator(1) {}
 
-Rational_number::Rational_number(long long int lop, unsigned long long int rop) {
+Rational_number::Rational_number(const signed long int op):numerator(op), denominator(1) {}
+
+Rational_number::Rational_number(const signed int op):numerator(op), denominator(1) {}
+
+Rational_number::Rational_number(const signed long long int lop, const unsigned long long int rop) {
     if (rop == 0) {
         throw DivisionByZeroException("Denominator cannot equal to zero.");
     }
     numerator = lop;
     denominator = rop;
+    this->make_canonical();
+}
+
+Rational_number::Rational_number(const signed long int lop, const unsigned long int rop) {
+    if (rop == 0) {
+        throw DivisionByZeroException("Denominator cannot equal to zero.");
+    }
+    numerator = lop;
+    denominator = rop;
+    this->make_canonical();
+}
+
+Rational_number::Rational_number(const signed int lop, const unsigned int rop) {
+    if (rop == 0) {
+        throw DivisionByZeroException("Denominator cannot equal to zero.");
+    }
+    numerator = lop;
+    denominator = rop;
+    this->make_canonical();
 }
 
 Rational_number::Rational_number(const char* op) {
@@ -28,6 +51,9 @@ Rational_number::Rational_number(const char* op) {
     auto pos = s.find("/"); 
     if (std::string::npos == pos) {
         pos = s.find(".");
+        if (s.substr(0, pos).empty()) {
+            throw WrongFormatException("Invalid rational number format: '" + s + "'");
+        }
         if (std::string::npos == pos) {
             numerator = std::stoll(s);
             denominator = 1;
@@ -42,39 +68,48 @@ Rational_number::Rational_number(const char* op) {
         }
     } else {
         if (s.substr(0, pos).empty()) {
-            throw std::runtime_error("Invalid rational number format: '" + s + "'");
+            throw WrongFormatException("Invalid rational number format: '" + s + "'");
         }
         auto lopa = std::stoll(s.substr(0, pos));
         s.erase(0, pos + 1);
         if (s.empty()) {
-            throw std::runtime_error("Invalid rational number format: '" + std::string(op) + "'");
+            throw WrongFormatException("Invalid rational number format: '" + std::string(op) + "'");
         }
         auto ropa = std::stoll(s);
         if (ropa == 0) {
             throw DivisionByZeroException("Denominator cannot equal to zero.");
         } else if (ropa < 0) {
-            throw std::runtime_error("Invalid rational number format: '" + std::string(op) + "'");
+            throw WrongFormatException("Invalid rational number format: '" + std::string(op) + "'");
         }
         numerator = lopa;
         denominator = ropa;
     }
-    make_canonical();
+    this->make_canonical();
 }
+
+Rational_number::Rational_number(const std::string op):Rational_number::Rational_number(op.c_str()) {}
 
 Rational_number::Rational_number(const char* lop, const char* rop) {
     if (std::string(lop).empty() or std::string(rop).empty()) {
-        throw std::runtime_error("Invalid rational number format: '" + std::string(rop) + "' / '" + std::string(lop) + "'");
+        throw WrongFormatException("Invalid rational number format: '" + std::string(rop) + "' / '" + std::string(lop) + "'");
     }
     auto lopa = std::stoll(lop);
     auto ropa = std::stoll(rop);
     if (ropa == 0) {
         throw DivisionByZeroException("Denominator cannot equal to zero.");
     } else if (ropa < 0) {
-        throw std::runtime_error("Invalid rational number format: '" + std::string(rop) + "' / '" + std::string(lop) + "'");
+        throw WrongFormatException("Invalid rational number format: '" + std::string(rop) + "' / '" + std::string(lop) + "'");
     }
     numerator = lopa;
     denominator = ropa;
+    this->make_canonical();
 }
+
+Rational_number::Rational_number(const long double op):Rational_number::Rational_number(std::to_string(op)) {}
+
+Rational_number::Rational_number(const double op):Rational_number::Rational_number(std::to_string(op)) {}
+
+Rational_number::Rational_number(const float op):Rational_number::Rational_number(std::to_string(op)) {}
 
 Rational_number& Rational_number::operator=(const long long int& op) {
     Rational_number rat(op);
@@ -106,7 +141,7 @@ Rational_number& Rational_number::operator+=(const Rational_number &op) {
     this->numerator *= op.denominator;
     this->numerator += op.numerator * this->denominator;
     this->denominator *= op.denominator;
-    make_canonical();
+    this->make_canonical();
     return *this;
 }
 
@@ -121,7 +156,7 @@ Rational_number& Rational_number::operator*=(const Rational_number &op) {
     if (this->denominator == 0) {
         throw DivisionByZeroException("Denominator cannot equal to zero.");
     }
-    make_canonical();
+    this->make_canonical();
     return *this;
 }
 
@@ -131,7 +166,7 @@ Rational_number& Rational_number::operator/=(const Rational_number &op) {
     if (this->denominator == 0) {
         throw DivisionByZeroException("Denominator cannot equal to zero.");
     }
-    make_canonical();
+    this->make_canonical();
     return *this;
 }
 
@@ -188,12 +223,13 @@ bool operator<(const Rational_number& lop, const Rational_number& rop) {
     clop.make_canonical();
     Rational_number crop = rop;
     crop.make_canonical();
-    // std::cout << clop << "\t" << crop << "\t" << clop.denominator * crop.numerator << "\t" << clop.numerator * (long long int)crop.denominator << "\n";
-    return (long long int)clop.denominator * crop.numerator > clop.numerator * (long long int)crop.denominator;
+    long long int rv = (long long int)clop.denominator * crop.numerator;
+    long long int lv = clop.numerator * (long long int)crop.denominator;
+    return rv > lv;
 }
 
 bool operator>(const Rational_number& lop, const Rational_number& rop) {
-    return !(lop < rop);
+    return !(lop < rop) && (lop != rop);
 }
 
 bool operator<=(const Rational_number& lop, const Rational_number& rop) {
@@ -236,15 +272,17 @@ Rational_number::operator bool() const {
 
 void Rational_number::set_numerator(const long long int& op) {
     this->numerator = op;
+    this->make_canonical();
 }
 
 void Rational_number::set_denominator(const long long int& op) {
     if (op == 0) {
         throw DivisionByZeroException("Denominator cannot equal to zero.");
     } else if (op < 0) {
-        throw std::runtime_error("Invalid denominator format: '" + std::to_string(op) + "'");
+        throw WrongFormatException("Invalid denominator format: '" + std::to_string(op) + "'");
     }
     this->denominator = op;
+    this->make_canonical();
 }
 
 long long int Rational_number::get_numerator() {
@@ -286,10 +324,8 @@ Rational_number& Rational_number::make_canonical() {
         denominator = 1;
     } else {
         long long int gcd = std::gcd(numerator, denominator);
-        if (!(numerator % denominator)) {
-            numerator = numerator / gcd;
-            denominator = denominator / gcd;
-        }
+        numerator = numerator / gcd;
+        denominator = denominator / gcd;
     }
     return *this;
 }
