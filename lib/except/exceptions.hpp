@@ -79,3 +79,20 @@ public:
         return message;
     }
 };
+
+/**
+ * @brief Exception, that is thrown when we are trying to create wrong coordinates
+ * 
+ */
+class CoordinatesMustMakeFigurePositive :std::exception {
+private:
+    const char* message;
+
+public:
+    CoordinatesMustMakeFigurePositive() : message("Left-up corner of coordinates must be lefter and upper than right-bottom corner.") {}
+    explicit CoordinatesMustMakeFigurePositive(const char* msg) : message(msg) {}
+    explicit CoordinatesMustMakeFigurePositive(const std::string& msg) : message(msg.c_str()) {}
+    const char* what () {
+        return message;
+    }
+};
