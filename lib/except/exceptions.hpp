@@ -9,6 +9,9 @@
  * 
  */
 
+#ifndef ARITHMETIC_EXCEPT_
+#define ARITHMETIC_EXCEPT_
+
 #include <exception>
 #include <string>
 
@@ -96,3 +99,22 @@ public:
         return message;
     }
 };
+
+/**
+ * @brief Exception, that is thrown when we are trying to access inaccessable element in a matrix
+ * 
+ */
+class IndexOutOfRangeException :std::exception {
+private:
+    const char* message;
+
+public:
+    IndexOutOfRangeException() : message("Index is out of range.") {}
+    explicit IndexOutOfRangeException(const char* msg) : message(msg) {}
+    explicit IndexOutOfRangeException(const std::string& msg) : message(msg.c_str()) {}
+    const char* what () {
+        return message;
+    }
+};
+
+#endif
