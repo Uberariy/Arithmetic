@@ -13,8 +13,23 @@ FetchContent_Declare(
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
-add_executable(arithmath lib/Rational_number.cpp lib/Rational_number.hpp tmptest.cpp)
+set(exceptions lib/except/exceptions.hpp)
+set(Rational_number lib/Rational_number.hpp lib/Rational_number.cpp)
+set(Matrix lib/Matrix.hpp lib/Matrix.cpp)
+
+add_library(arithmath ${Rational_number} ${Matrix} ${exceptions})
+
+add_executable(test lib/Matrix.cpp lib/Matrix_coords.hpp tmptest.cpp)
+target_link_libraries(test arithmath)
+target_link_libraries(test gtest_main)
+add_test(NAME test COMMAND test)
 
 add_executable(Rational_number_test lib/Rational_number.cpp lib/Rational_number.hpp lib/test/Rational_number_test.cpp)
+target_link_libraries(Rational_number_test arithmath)
 target_link_libraries(Rational_number_test gtest_main)
-add_test(NAME Rational_number_constructor_test COMMAND Rational_number_constructor_test)
+add_test(NAME Rational_number_test COMMAND Rational_number_test)
+
+add_executable(Matrix_test lib/Matrix.hpp lib/Matrix.cpp lib/test/Matrix_test.cpp)
+target_link_libraries(Matrix_test arithmath)
+target_link_libraries(Matrix_test gtest_main)
+add_test(NAME Matrix_test COMMAND Matrix_test)

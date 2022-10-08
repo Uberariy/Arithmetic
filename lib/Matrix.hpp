@@ -20,8 +20,12 @@
 #include "Matrix_coords.hpp"
 #include "Rational_number.hpp"
 
+// template<typename T>
+// class Matrix;
+
+
 /**
- * @brief 
+ * @brief Matrix class capable of stroing dense matrices
  * 
  * @tparam TValue type of stored objects
  */
@@ -41,7 +45,6 @@ public:
            length_y(default_length_y), 
            epsilon_tresh(default_epsilon_tresh) {
         unsigned long long key_x;
-        std::cout << std::min(default_length_x, default_length_y);
         for (key_x = 1; key_x < std::min(default_length_x, default_length_y) + 1; key_x++) {
             data[std::pair<unsigned long long, unsigned long long>(key_x, key_x)] = 1;
         }
@@ -95,57 +98,166 @@ public:
         return data[pos];
     }
 
+    /**
+     * @brief Equality comparator
+     * 
+     * @tparam Tl 
+     * @tparam Tr 
+     * @param lop 
+     * @param rop 
+     * @return true 
+     * @return false 
+     */
     template<typename Tl, typename Tr>
     friend bool operator==(const Matrix<Tl> &lop, const Matrix<Tr> &rop);
 
+    /**
+     * @brief Inequality comparator
+     * 
+     * @tparam Tl 
+     * @tparam Tr 
+     * @param lop 
+     * @param rop 
+     * @return true 
+     * @return false 
+     */
     template<typename Tl, typename Tr>
     friend bool operator!=(const Matrix<Tl> &lop, const Matrix<Tr> &rop);
 
+    /**
+     * @brief Matrix Minus operator
+     * 
+     * @tparam Tl 
+     * @tparam Tr 
+     * @param lop 
+     * @param rop 
+     * @return auto 
+     */
     template<typename Tl, typename Tr>
     friend auto operator-(const Matrix<Tl> &lop, const Matrix<Tr> &rop);
 
+    /**
+     * @brief Matrix plus operator
+     * 
+     * @tparam Tl 
+     * @tparam Tr 
+     * @param lop 
+     * @param rop 
+     * @return auto 
+     */
     template<typename Tl, typename Tr>
     friend auto operator+(const Matrix<Tl> &lop, const Matrix<Tr> &rop);
 
     // template<typename Tl, typename Tr>
     // friend auto operator*(Matrix<Tl> lop, Matrix<Tr> rop);
 
+    /**
+     * @brief Plus operator
+     * 
+     * @tparam Tl 
+     * @tparam Tr 
+     * @param lop 
+     * @param rop 
+     * @return auto 
+     */
     template<typename Tl, typename Tr>
     friend auto operator+(Matrix<Tl> lop, const Tr& rop);
 
+    /**
+     * @brief Minus operator
+     * 
+     * @tparam Tl 
+     * @tparam Tr 
+     * @param lop 
+     * @param rop 
+     * @return auto 
+     */
     template<typename Tl, typename Tr>
     friend auto operator-(Matrix<Tl> lop, const Tr& rop);
 
+    /**
+     * @brief Multiplication operator
+     * 
+     * @tparam Tl 
+     * @tparam Tr 
+     * @param lop 
+     * @param rop 
+     * @return auto 
+     */
     template<typename Tl, typename Tr>
     friend auto operator*(Matrix<Tl> lop, const Tr& rop);
 
+    /**
+     * @brief Division operator
+     * 
+     * @tparam Tl 
+     * @tparam Tr 
+     * @param lop 
+     * @param rop 
+     * @return auto 
+     */
     template<typename Tl, typename Tr>
     friend auto operator/(Matrix<Tl> lop, const Tr& rop);
 
+    /**
+     * @brief Set the epsilon tresh object
+     * 
+     * @param op 
+     */
     void set_epsilon_tresh(double& op) {
         epsilon_tresh = op;
     }
 
+    /**
+     * @brief Set the length x object
+     * 
+     * @param op 
+     */
     void set_length_x(unsigned long long& op) {
         length_x = op;
     }
 
+    /**
+     * @brief Set the length y object
+     * 
+     * @param op 
+     */
     void set_length_y(unsigned long long& op) {
         length_y = op;
     }
 
+    /**
+     * @brief Get the epsilon tresh object
+     * 
+     * @return double 
+     */
     double get_epsilon_tresh() {
         return epsilon_tresh;
     }
 
+    /**
+     * @brief Get the length x object
+     * 
+     * @return unsigned long long 
+     */
     unsigned long long get_length_x() {
         return length_x;
     }
 
+    /**
+     * @brief Get the length y object
+     * 
+     * @return unsigned long long 
+     */
     unsigned long long get_length_y() {
         return length_y;
     }
 
+    /**
+     * @brief Convert matrix to string
+     * 
+     * @return std::string 
+     */
     std::string to_string() const {
         std::stringstream ss;
         ss << "matrix " << typeid(T).name() << " " << length_x << " " << length_y << "\n";
@@ -192,5 +304,14 @@ std::ostream& operator<<(std::ostream& os, Matrix<T> const& op);
 
 template <typename T>
 std::istream& operator>>(std::istream& is, Matrix<T>& op);
+
+template<typename Tl, typename Tr>
+auto operator+(Matrix<Tl> lop, const Tr& rop);
+
+template<typename Tl, typename Tr>
+auto operator-(Matrix<Tl> lop, const Tr& rop);
+
+template<typename Tl, typename Tr>
+auto operator*(Matrix<Tl> lop, const Tr& rop);
 
 #endif
