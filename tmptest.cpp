@@ -34,6 +34,7 @@ int main() {
     Matrix<Rational_number> A;
     A(2, 3) = 4;
     A = A * 2 / 3;
+    A == A;
     std::cout << A;
 
 

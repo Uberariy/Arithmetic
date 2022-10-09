@@ -80,6 +80,59 @@ public:
     }
 
     /**
+     * Matrix destructor.
+     * It is necessary to mark matrix as deleted in all proxies that point to this matrix while deleting the matrix.
+     */
+    // ~Matrix() {
+    //     for (auto proxy: proxies) {
+    //         proxy->unlink();
+    //     }
+    // }
+
+    /**
+     * @brief Copy operator
+     * 
+     * @param rop 
+     * @return Matrix& 
+     */
+    Matrix& operator=(const Matrix& rop) {
+        Matrix res(rop.length_x, rop.length_y, rop.epsilon_tresh);
+        for (auto &[key, val] : rop.data) {
+            res.data[key] = rop.data.find(key)->second;
+        }
+        std::swap(length_x, res.length_x);
+        std::swap(length_y, res.length_y);
+        std::swap(epsilon_tresh, res.epsilon_tresh);
+        std::swap(data, res.data);
+        return *this;
+    }
+
+    // Matrix& operator=(Matrix&& rop) noexcept {
+    //     length_x = std::move(rop.length_x);
+    //     rop.length_x = (unsigned long long)(default_length_x);
+    //     length_y = std::move(rop.length_y);
+    //     rop.length_y = (unsigned long long)(default_length_y);
+    //     epsilon_tresh = std::move(rop.epsilon_tresh);
+    //     rop.epsilon_tresh = (unsigned long long)(default_epsilon_tresh);
+    //     data = std::move(rop.data);
+    //     rop.data = {};
+    // }
+
+    // Matrix& operator=(std::map<std::pair<unsigned long long, unsigned long long>, T>&& rop) noexcept {
+    //     data = std::move(rop);
+    //     rop = {};
+    // }
+
+    Matrix operator~() {
+        Matrix res(length_y, length_x);
+        for(auto [key, value] : data) {
+            std::pair<unsigned long long, unsigned long long> pos(key.second, key.first);
+            res.data[pos] = value;
+        }
+        return res;
+    }
+
+    /**
      * Access operator.
      *
      * @param x Pos of required element on x axis.

@@ -10,6 +10,7 @@
  */
 
 #include "Matrix.hpp"
+#include <iostream>
 
 template<typename T>
 std::ostream& operator<<(std::ostream& os, Matrix<T> const& op) {
@@ -32,8 +33,11 @@ bool operator==(const Matrix<Tl> &lop, const Matrix<Tr> &rop) {
 
 template<typename Tl, typename Tr>
 bool operator!=(const Matrix<Tl> &lop, const Matrix<Tr> &rop) {
+    if ((lop.length_x != rop.length_x) || (lop.length_y != rop.length_y))
+        return true;
+    Matrix<decltype(Tl() + Tr())> res(lop.length_x, lop.length_y);
     for (auto &[key, val] : lop.data) {
-        if ((rop.data.find(key) != rop.data.end()) && (rop.data[key] == lop.data[key])) {
+        if ((rop.data.find(key) != rop.data.end()) && (rop.data.find(key)->second == lop.data.find(key)->second)) {
             ;
         } else {
             return true;
