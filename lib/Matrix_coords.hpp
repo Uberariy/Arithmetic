@@ -94,6 +94,23 @@ class Matrix_coords {
         r_bot_y = r_bot_y_;
         check_coords();
     }
+
+    /**
+     * @brief Check if figure does not have negative area
+     * 
+     * @return Rational_number& 
+     */
+    Matrix_coords& check_coords() {
+        if ((r_bot_x < -1) || (r_bot_x == 0) ||
+            (r_bot_y < -1) || (r_bot_y == 0) ||
+            (l_top_x < -1) || (l_top_x == 0) ||
+            (l_top_y < -1) || (l_top_y == 0) ||
+            ((r_bot_x < l_top_x) && (r_bot_x != -1)) || 
+            ((r_bot_y < l_top_y) && (r_bot_y != -1))) {
+            throw CoordinatesMustMakeFigurePositive();
+        }
+        return *this;
+    }
 private:
     /**
      * @brief Right bottom corner x axis coordinate
@@ -118,23 +135,6 @@ private:
      * 
      */
     long long l_top_y;
-
-    /**
-     * @brief Check if figure does not have negative area
-     * 
-     * @return Rational_number& 
-     */
-    Matrix_coords& check_coords() {
-        if ((r_bot_x < -1) || (r_bot_x == 0) ||
-            (r_bot_y < -1) || (r_bot_y == 0) ||
-            (l_top_x < -1) || (l_top_x == 0) ||
-            (l_top_y < -1) || (l_top_y == 0) ||
-            ((r_bot_x < l_top_x) && (r_bot_x != -1)) || 
-            ((r_bot_y < l_top_y) && (r_bot_y != -1))) {
-            throw CoordinatesMustMakeFigurePositive();
-        }
-        return *this;
-    }
 };
 
 

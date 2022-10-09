@@ -27,7 +27,7 @@
 /**
  * @brief Matrix class capable of stroing dense matrices
  * 
- * @tparam TValue type of stored objects
+ * @tparam T type of stored objects
  */
 template<typename T>
 class Matrix {
@@ -80,14 +80,38 @@ public:
     }
 
     /**
-     * Matrix destructor.
+     * @brief Copy constructor
+     *
+     * @param rop instance to copy.
+     */
+    Matrix(Matrix& rop) : length_x(rop.length_x), length_y(rop.length_y), epsilon_tresh(rop.epsilon_tresh), data(rop.data) { }
+
+    /**
+     * Matrix destructor
      * It is necessary to mark matrix as deleted in all proxies that point to this matrix while deleting the matrix.
      */
-    // ~Matrix() {
-    //     for (auto proxy: proxies) {
-    //         proxy->unlink();
-    //     }
-    // }
+    ~Matrix() {
+        for (auto proxy: proxy_set) {
+            proxy->deattach();
+        }
+    }
+
+    /**
+     * @brief Add a proxy and link it with this Matrix
+     *
+     * @param proxy
+    */
+    void add_proxy(Matrix_proxy<T>* proxy) {
+        proxies.insert(proxy);
+    }
+
+    /**
+     * @brief Unlink proxy object with this Matrix
+     *
+     * @param proxy
+     */
+    void remove_proxy(Matrix_proxy<T>* proxy) {
+        proxy_set.erase(proxy);
 
     /**
      * @brief Copy operator
@@ -149,6 +173,46 @@ public:
         //     data[pos] = T(0);
         // }
         return data[pos];
+    }
+
+    /**
+     * Slice operator
+     *
+     * @param coords
+     * @return 
+     */
+    Matrix_proxy<T> operator[](const Matrix_coords& coords) {
+        auto [slice_r_bot_x, slice_r_bot_y] = coords.get_r_bot();
+        if ((slice_r_bot_x > length_x) || (slice_r_bot_y > length_y)) {
+            throw IndexOutOfRangeException("Matrix has got you!")
+        }
+        return Matrix_proxy<T>(this, coords);
+    }
+
+    /**
+     * Slice operator
+     *
+     * @param coords
+     * @return 
+     */
+    Matrix_proxy<T> operator[](const Matrix_row_coord& coords) {
+        if (coords.get_row_idx() > length_y) {
+            throw IndexOutOfRangeException("Matrix has got you!")
+        }
+        return Matrix_proxy<T>(this, coords);
+    }
+
+    /**
+     * Slice operator
+     *
+     * @param coords
+     * @return 
+     */
+    Matrix_proxy<T> operator[](const Matrix_column_coord& coords) {
+        if (coords.get_column_idx() > length_x) {
+            throw IndexOutOfRangeException("Matrix has got you!")
+        }
+        return Matrix_proxy<T>(this, coords);
     }
 
     /**
@@ -323,20 +387,57 @@ public:
 
 private:
 
+    /**
+     * @brief The treshhold, that limits miserability of matrix element
+     * 
+     */
     double epsilon_tresh;
 
+    /**
+     * @brief The treshhold, that limits miserability of matrix element
+     * Default version
+     */
     static constexpr double default_epsilon_tresh = 0.000001;
 
+    /**
+     * @brief Matrix length
+     * 
+     */
     unsigned long long length_x;
 
+    /**
+     * @brief Matrix length
+     * Default version
+     */
     static constexpr unsigned long long default_length_x = 5;
 
+    /**
+     * @brief Matrix width
+     * 
+     */
     unsigned long long length_y;
 
+    /**
+     * @brief Matrix width
+     * Default version
+     */
     static constexpr unsigned long long default_length_y = 5;
 
+    /**
+     * @brief Actual matrix data
+     * 
+     */
     std::map<std::pair<unsigned long long, unsigned long long>, T> data;
 
+    /**
+     * @brief Set of matrix proxies related with this matrix
+     * 
+     */
+    std::set<Matrix_proxy<T>*> proxy_set;
+
+    /**
+     * Remove miserable enough elements.
+    */
     Matrix& delete_null_elements() {
         std::set<std::pair<unsigned long long, unsigned long long>> null_keys;
         for (auto [key, val]: data) {
