@@ -10,6 +10,7 @@
  */
 
 #include "Rational_number.hpp"
+#include <algorithm>
 
 Rational_number::Rational_number():numerator(1), denominator(1) {}
 
@@ -48,6 +49,8 @@ Rational_number::Rational_number(const signed int lop, const unsigned int rop) {
 
 Rational_number::Rational_number(const char* op) {
     std::string s = std::string(op);
+    s.erase(std::remove(s.begin(), s.end(), '>'), s.end());
+    s.erase(std::remove(s.begin(), s.end(), '<'), s.end());
     auto pos = s.find("/"); 
     if (std::string::npos == pos) {
         pos = s.find(".");

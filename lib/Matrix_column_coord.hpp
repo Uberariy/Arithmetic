@@ -20,14 +20,33 @@
 class Matrix_column_coord {
 public:
 
+    /**
+     * @brief Construct a new Matrix_column_coord object
+     * 
+     */
     Matrix_column_coord() : column_idx(0) {}
 
+    /**
+     * @brief Construct a new Matrix_column_coord object
+     * 
+     * @param idx_ 
+     */
     Matrix_column_coord(unsigned long long idx_) : column_idx(idx_) {}
 
-    unsigned long long get_column_idx() {
+    /**
+     * @brief Get the column idx object
+     * 
+     * @return unsigned long long 
+     */
+    unsigned long long get_column_idx() const {
         return column_idx;
     }
 
+    /**
+     * @brief Set the column idx object
+     * 
+     * @param idx_ 
+     */
     void set_column_idx(unsigned long long idx_) {
         column_idx = idx_;
     }

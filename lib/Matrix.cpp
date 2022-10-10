@@ -19,10 +19,44 @@ std::ostream& operator<<(std::ostream& os, Matrix<T> const& op) {
 }
 
 template<typename T>
-std::istream& operator>>(std::istream& is, Matrix<T>& op) { // To be done
-
-
-
+std::istream& operator>>(std::istream& is, Matrix<T>& op) {
+    std::string s;
+    is >> s;
+    while (s == "#") {
+        while (is.peek() != '\n') {
+            is >> s;
+        }
+        is >> s;
+    }
+    if (s != "matrix") {
+        throw WrongFormatWhileParsingException("Insupported structure: '" + s + "'");
+    }
+    is >> s;
+    if (s != "rational") {
+        throw WrongFormatWhileParsingException("Insupported type: '" + s + "'");
+    }
+    unsigned long long x;
+    unsigned long long y;
+    is >> s;
+    x = std::stoull(s.c_str());
+    op.set_length_x(x);
+    is >> s;
+    x = std::stoull(s.c_str());
+    op.set_length_y(x);
+    T element;
+    while (!is.fail() && (is >> s)) {
+        while (s == "#") {
+            while (is.peek() != '\n') {
+                is >> s;
+            }
+            is >> s;
+        }
+        x = std::stoull(s.c_str());
+        is >> y;
+        std::getline(is, s, '>');
+        element = Rational_number(s + '>');
+        op(x, y) = element;
+    }
     return is;
 }
 

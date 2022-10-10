@@ -94,6 +94,10 @@ TEST(Rational_number_constructor_test, constructor_string) {
     ASSERT_EQ(rational.get_numerator(), -6) << "Wrong numerator, got " << rational.get_numerator();
     ASSERT_EQ(rational.get_denominator(), 1) << "Wrong denominator, got " << rational.get_denominator();
 
+    rational = Rational_number("<-10 /   30>");
+    ASSERT_EQ(rational.get_numerator(), -1) << "Wrong numerator, got " << rational.get_numerator();
+    ASSERT_EQ(rational.get_denominator(), 3) << "Wrong denominator, got " << rational.get_denominator();
+
     ASSERT_ANY_THROW(Rational_number("1 / -6"));
     ASSERT_ANY_THROW(Rational_number("---1 / 6"));
     ASSERT_ANY_THROW(Rational_number("0 / 0"));

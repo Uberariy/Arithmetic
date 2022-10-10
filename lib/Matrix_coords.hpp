@@ -20,7 +20,8 @@
  * @brief Matrix coordinates class
  */
 class Matrix_coords {
-    
+public:
+
     /**
      * @brief Construct a new Matrix_coords object - default constructor
      * If all of the coordinates equal -1, then we wan to take the whole matrix child
@@ -47,8 +48,8 @@ class Matrix_coords {
      * @param l_top_x_ 
      * @param l_top_y_ 
      */
-    explicit Matrix_coords(long long r_bot_x_, long long r_bot_y_,
-                           long long l_top_x_, long long l_top_y_): 
+    explicit Matrix_coords(long long l_top_x_, long long l_top_y_,
+                           long long r_bot_x_, long long r_bot_y_): 
     r_bot_x(r_bot_x_), r_bot_y(r_bot_y_), l_top_x(l_top_x_), l_top_y(l_top_y_) {
         check_coords();
     }
@@ -58,7 +59,7 @@ class Matrix_coords {
      * 
      * @return std::tuple<long long, long long> 
      */
-    std::tuple<long long, long long> get_l_top() {
+    std::tuple<long long, long long> get_l_top() const {
         return std::make_tuple(l_top_x, l_top_y);
     }
 
@@ -67,7 +68,7 @@ class Matrix_coords {
      * 
      * @return std::tuple<long long, long long> 
      */
-    std::tuple<long long, long long> get_r_bot() {
+    std::tuple<long long, long long> get_r_bot() const {
         return std::make_tuple(r_bot_x, r_bot_y);
     }
 
@@ -107,7 +108,7 @@ class Matrix_coords {
             (l_top_y < -1) || (l_top_y == 0) ||
             ((r_bot_x < l_top_x) && (r_bot_x != -1)) || 
             ((r_bot_y < l_top_y) && (r_bot_y != -1))) {
-            throw CoordinatesMustMakeFigurePositive();
+            throw CoordinatesMustMakeFigurePositive("Coordinates don't match: " + std::to_string(l_top_x) + ", " + std::to_string(l_top_y) + ", " + std::to_string(r_bot_x) + ", " + std::to_string(r_bot_y) + "; ");
         }
         return *this;
     }

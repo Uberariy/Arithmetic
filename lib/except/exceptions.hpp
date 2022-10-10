@@ -117,4 +117,38 @@ public:
     }
 };
 
+/**
+ * @brief Exception, that is thrown when we are trying to access removed matrix slice
+ * 
+ */
+class NullPtrAccessAttempt :std::exception {
+private:
+    const char* message;
+
+public:
+    NullPtrAccessAttempt() : message("The matrix is gone.") {}
+    explicit NullPtrAccessAttempt(const char* msg) : message(msg) {}
+    explicit NullPtrAccessAttempt(const std::string& msg) : message(msg.c_str()) {}
+    const char* what () {
+        return message;
+    }
+};
+
+/**
+ * @brief Exception, that is thrown when we are trying to access removed matrix slice
+ * 
+ */
+class WrongFormatWhileParsingException :std::exception {
+private:
+    const char* message;
+
+public:
+    WrongFormatWhileParsingException() : message("Wrong format while parsing.") {}
+    explicit WrongFormatWhileParsingException(const char* msg) : message(msg) {}
+    explicit WrongFormatWhileParsingException(const std::string& msg) : message(msg.c_str()) {}
+    const char* what () {
+        return message;
+    }
+};
+
 #endif

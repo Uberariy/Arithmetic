@@ -16,13 +16,14 @@
 #include <set>
 #include <fstream>
 #include <sstream>
+#include <iostream>
 
+#include "Matrix_proxy.hpp"
 #include "Matrix_coords.hpp"
 #include "Rational_number.hpp"
 
 // template<typename T>
 // class Matrix;
-
 
 /**
  * @brief Matrix class capable of stroing dense matrices
@@ -80,11 +81,24 @@ public:
     }
 
     /**
+     * @brief Construct a new Matrix object
+     * 
+     * @param in_file 
+     * @param epsilon_tresh_ 
+     */
+    Matrix(const char* in_file,
+           double epsilon_tresh_ = default_epsilon_tresh):
+           epsilon_tresh(epsilon_tresh_) {
+        std::fstream ss_f(in_file);
+        ss_f >> *this;
+    }
+
+    /**
      * @brief Copy constructor
      *
      * @param rop instance to copy.
      */
-    Matrix(Matrix& rop) : length_x(rop.length_x), length_y(rop.length_y), epsilon_tresh(rop.epsilon_tresh), data(rop.data) { }
+    Matrix(Matrix& rop) : length_x(rop.length_x), length_y(rop.length_y), epsilon_tresh(rop.epsilon_tresh), data(rop.data) {}
 
     /**
      * Matrix destructor
@@ -102,7 +116,7 @@ public:
      * @param proxy
     */
     void add_proxy(Matrix_proxy<T>* proxy) {
-        proxies.insert(proxy);
+        proxy_set.insert(proxy);
     }
 
     /**
@@ -112,6 +126,7 @@ public:
      */
     void remove_proxy(Matrix_proxy<T>* proxy) {
         proxy_set.erase(proxy);
+    }
 
     /**
      * @brief Copy operator
@@ -166,6 +181,7 @@ public:
     T& operator()(const unsigned long long& x, const unsigned long long& y) {
         delete_null_elements();
         std::pair<unsigned long long, unsigned long long> pos(x, y);
+        // std::cout << "Matrix operator() x: " << x << ", y:" << y << "\n";
         if ((x > length_x) || (y > length_y)) {
             throw IndexOutOfRangeException("Index is out of range");
         }
@@ -183,8 +199,8 @@ public:
      */
     Matrix_proxy<T> operator[](const Matrix_coords& coords) {
         auto [slice_r_bot_x, slice_r_bot_y] = coords.get_r_bot();
-        if ((slice_r_bot_x > length_x) || (slice_r_bot_y > length_y)) {
-            throw IndexOutOfRangeException("Matrix has got you!")
+        if ((slice_r_bot_x > (long long)length_x) || (slice_r_bot_y > (long long)length_y)) {
+            throw IndexOutOfRangeException("Matrix has got you!");
         }
         return Matrix_proxy<T>(this, coords);
     }
@@ -197,7 +213,7 @@ public:
      */
     Matrix_proxy<T> operator[](const Matrix_row_coord& coords) {
         if (coords.get_row_idx() > length_y) {
-            throw IndexOutOfRangeException("Matrix has got you!")
+            throw IndexOutOfRangeException("Matrix has got you!");
         }
         return Matrix_proxy<T>(this, coords);
     }
@@ -210,7 +226,7 @@ public:
      */
     Matrix_proxy<T> operator[](const Matrix_column_coord& coords) {
         if (coords.get_column_idx() > length_x) {
-            throw IndexOutOfRangeException("Matrix has got you!")
+            throw IndexOutOfRangeException("Matrix has got you!");
         }
         return Matrix_proxy<T>(this, coords);
     }

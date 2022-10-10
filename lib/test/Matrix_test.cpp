@@ -11,6 +11,7 @@
 
 #include "../Matrix.cpp"
 #include "../Rational_number.cpp"
+#include "../Matrix_coords.hpp"
 #include "gtest/gtest.h"
 #include <iostream>
 
@@ -50,15 +51,43 @@ TEST(Matrix_test, matrix_operator) {
     A(2, 3) = 8;
     C(3, 2) = 8;
     ASSERT_EQ(A, ~C);
-}
-
-TEST(Matrix_test, matrix_exception) {
-    Matrix<Rational_number> A(5, 5, 0.001, true, Rational_number(1, 10));
-    Matrix<Rational_number> B(5, 5, 0.001, true, 1);
 
     ASSERT_ANY_THROW(A(1000, 0));
-    // ASSERT_EQ(rational.get_denominator(), 1) << "Wrong denominator, got " << rational.get_denominator();
-    
-    // ASSERT_ANY_THROW(Rational_number(1, 0));
-    // ASSERT_ANY_THROW(Rational_number(0, 0));
+}
+
+TEST(Matrix_test, matrix_slice) {
+    Matrix<Rational_number> A(5, 5, 0.001, true, Rational_number(1, 10));
+
+    Matrix_coords FullCoords(1, -1, -1, 3);
+    Matrix_proxy SrezA = A[FullCoords];
+
+    Matrix_column_coord ColCoord(3);
+    Matrix_proxy SrezB = A[ColCoord];
+
+    Matrix_row_coord RowCoord(2);
+    Matrix_proxy SrezC = A[RowCoord];
+
+    SrezA(4, 3) = Rational_number(1, 3);
+    ASSERT_EQ(SrezB(4), Rational_number(1, 3));
+    SrezC(3) = Rational_number(2, 3);
+    ASSERT_EQ(SrezA(2, 3), Rational_number(2, 3));
+
+    ASSERT_ANY_THROW(SrezA(3, 4));
+    ASSERT_ANY_THROW(SrezB(6));
+    ASSERT_ANY_THROW(SrezC(6));
+
+    A = Matrix<Rational_number>(1, 1, 0.001, true, Rational_number(1, 10));
+
+    ASSERT_ANY_THROW(SrezA(4, 3));
+    ASSERT_ANY_THROW(SrezB(4));
+    ASSERT_ANY_THROW(SrezC(3));
+}
+
+TEST(Matrix_test, matrix_parser) {
+    Matrix<Rational_number> A("input_example/matrix1.txt", 0.001);
+
+    ASSERT_EQ(A(1, 1), Rational_number(100));
+    ASSERT_EQ(A(6000, 2), Rational_number(23, 5));
+    ASSERT_EQ(A(7, 1), Rational_number(-5, 3));
+    ASSERT_EQ(A(22, 1), Rational_number(44, 1));
 }

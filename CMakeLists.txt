@@ -19,7 +19,7 @@ set(Matrix lib/Matrix.hpp lib/Matrix.cpp)
 
 add_library(arithmath ${Rational_number} ${Matrix} ${exceptions})
 
-add_executable(test lib/Matrix.cpp lib/Matrix_coords.hpp tmptest.cpp)
+add_executable(test lib/test/Rational_number_test.cpp lib/Matrix.hpp lib/Matrix.cpp lib/test/Matrix_test.cpp)
 target_link_libraries(test arithmath)
 target_link_libraries(test gtest_main)
 add_test(NAME test COMMAND test)
@@ -33,3 +33,22 @@ add_executable(Matrix_test lib/Matrix.hpp lib/Matrix.cpp lib/test/Matrix_test.cp
 target_link_libraries(Matrix_test arithmath)
 target_link_libraries(Matrix_test gtest_main)
 add_test(NAME Matrix_test COMMAND Matrix_test)
+
+option(BUILD_DOC "Build documentation" ON)
+
+find_package(Doxygen)
+if (DOXYGEN_FOUND)
+    set(DOXYGEN_IN ${CMAKE_CURRENT_SOURCE_DIR}/docs/Doxyfile.in)
+    set(DOXYGEN_OUT ${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile)
+
+    configure_file(${DOXYGEN_IN} ${DOXYGEN_OUT} @ONLY)
+    message("Doxygen build started")
+
+    add_custom_target( doc_doxygen ALL
+        COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYGEN_OUT}
+        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+        COMMENT "Generating API documentation with Doxygen"
+        VERBATIM )
+else (DOXYGEN_FOUND)
+  message("Doxygen need to be installed to generate the doxygen documentation")
+endif (DOXYGEN_FOUND)

@@ -15,6 +15,12 @@
 #include "Matrix_column_coord.hpp"
 #include "Matrix_row_coord.hpp"
 #include "Matrix_coords.hpp"
+#include "Matrix.hpp"
+
+#include <iostream>
+
+template<typename TValue>
+class Matrix;
 
 enum class Matrix_proxy_type {
     ROW,
@@ -31,18 +37,36 @@ template<typename T>
 class Matrix_proxy {
 public:
 
+    /**
+     * @brief Construct a new Matrix_proxy object
+     * 
+     * @param matrixptr_ 
+     * @param coords is a row
+     */
     Matrix_proxy(Matrix<T>* matrixptr_, Matrix_row_coord coords) : 
         matrixptr(matrixptr_), proxy_type(Matrix_proxy_type::ROW),
-        slice_coords(1, coords.get_row_idx(), matrixptr_->get_length_x(), coords.get_row_idx()) {
+        slice_coords(coords.get_row_idx(), 1, coords.get_row_idx(), matrixptr_->get_length_y()) {
         matrixptr->add_proxy(this);
     }
 
+    /**
+     * @brief Construct a new Matrix_proxy object
+     * 
+     * @param matrixptr_ 
+     * @param coords is a column
+     */
     Matrix_proxy(Matrix<T>* matrixptr_, Matrix_column_coord coords) : 
         matrixptr(matrixptr_), proxy_type(Matrix_proxy_type::COLUMN),
-        slice_coords(coords.get_column_idx(), 1, coords.get_column_idx(), matrixptr_->get_length_y()) {
+        slice_coords(1, coords.get_column_idx(), matrixptr_->get_length_x(), coords.get_column_idx()) {
         matrixptr->add_proxy(this);
     }
 
+    /**
+     * @brief Construct a new Matrix_proxy object
+     * 
+     * @param matrixptr_ 
+     * @param coords is a rectangular figure
+     */
     Matrix_proxy(Matrix<T>* matrixptr_, Matrix_coords coords) : 
         matrixptr(matrixptr_), proxy_type(Matrix_proxy_type::FULL) {
         matrixptr->add_proxy(this);
@@ -60,9 +84,13 @@ public:
         if (slice_r_bot_y == -1) {
             slice_r_bot_y = matrixptr->get_length_y();
         }
-        slice_coords 
+        slice_coords = Matrix_coords(slice_l_top_x, slice_l_top_y, slice_r_bot_x, slice_r_bot_y);
     }
 
+    /**
+     * @brief Destroy the Matrix_proxy object
+     * 
+     */
     ~Matrix_proxy() {
         if (matrixptr != nullptr) {
             matrixptr->remove_proxy(this);
@@ -83,12 +111,15 @@ public:
      * @param y_
      */
     T& operator()(const long long x_, const long long y_) {
+        if (matrixptr == nullptr) {
+            throw NullPtrAccessAttempt("Matrix is gone!");
+        }
         auto [slice_l_top_x, slice_l_top_y] = slice_coords.get_l_top();
         auto [slice_r_bot_x, slice_r_bot_y] = slice_coords.get_r_bot();
-        if ((slice_l_top_x + x_ < slice_r_bot_x) || (slice_l_top_y + y_ < slice_r_bot_y)) {
-            throw IndexOutOfRangeException('Index is out of slice!');
+        if ((slice_l_top_x + x_ > slice_r_bot_x + 1) || (slice_l_top_y + y_ > slice_r_bot_y + 1)) {
+            throw IndexOutOfRangeException("Index is out of slice!");
         }
-        return operator()(slice_l_top_x + x_, slice_l_top_y + y_);
+        return matrixptr->operator()(slice_l_top_x + x_ - 1, slice_l_top_y + y_ - 1);
     }
 
     /**
@@ -97,20 +128,23 @@ public:
      * @param idx_
      */
     T& operator()(const long long idx_) {
+        if (matrixptr == nullptr) {
+            throw NullPtrAccessAttempt("Matrix is gone!");
+        }
         auto [slice_l_top_x, slice_l_top_y] = slice_coords.get_l_top();
         auto [slice_r_bot_x, slice_r_bot_y] = slice_coords.get_r_bot();
         if (proxy_type == Matrix_proxy_type::FULL) {
-            throw IndexOutOfRangeException('Cannot access a rectangle slice this way!');
+            throw IndexOutOfRangeException("Cannot access a rectangle slice this way!");
         } else if (proxy_type == Matrix_proxy_type::COLUMN) {
-            if (slice_l_top_y + idx < slice_r_bot_y) {
-                throw IndexOutOfRangeException('Index is out of slice (column case)!');
+            if (slice_l_top_x + idx_ > slice_r_bot_x + 1) {
+                throw IndexOutOfRangeException("Index is out of slice (column case)!");
             }
-            return operator()(slice_l_top_x, slice_l_top_y + idx_);
-        } else if (proxy_type == Matrix_proxy_type::ROW) {
-            if (slice_l_top_x + idx < slice_r_bot_x) {
-                throw IndexOutOfRangeException('Index is out of slice (row case)!');
+            return matrixptr->operator()(slice_l_top_x + idx_ - 1, slice_l_top_y);
+        } else {
+            if (slice_l_top_y + idx_ > slice_r_bot_y + 1) {
+                throw IndexOutOfRangeException("Index is out of slice (row case)!");
             }
-            return operator()(slice_l_top_x + idx_, slice_l_top_y);
+            return matrixptr->operator()(slice_l_top_x, slice_l_top_y + idx_ - 1);
         }
     }
 
