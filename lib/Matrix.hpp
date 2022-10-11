@@ -162,6 +162,11 @@ public:
     //     rop = {};
     // }
 
+    /**
+     * @brief Transpose the matrix
+     * 
+     * @return Matrix 
+     */
     Matrix operator~() {
         Matrix res(length_y, length_x);
         for(auto [key, value] : data) {
@@ -469,9 +474,25 @@ private:
 
 };
 
+/**
+ * @brief Output matrix to the out stream
+ * 
+ * @tparam T 
+ * @param os 
+ * @param op 
+ * @return std::ostream& 
+ */
 template <typename T>
 std::ostream& operator<<(std::ostream& os, Matrix<T> const& op);
 
+/**
+ * @brief Parse matrix from a file
+ * 
+ * @tparam T 
+ * @param is 
+ * @param op 
+ * @return std::istream& 
+ */
 template <typename T>
 std::istream& operator>>(std::istream& is, Matrix<T>& op);
 

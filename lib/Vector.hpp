@@ -20,9 +20,9 @@
 #include "Rational_number.hpp"
 
 /**
- * @brief 
+ * @brief Vector class implementation
  * 
- * @tparam TValue 
+ * @tparam T 
  */
 template<typename T>
 class Vector {
@@ -50,31 +50,69 @@ public:
         }
     }
 
-
+    /**
+     * @brief Output a string repr of a vector
+     * 
+     * @tparam Ti 
+     * @param os 
+     * @param op 
+     * @return std::ostream& 
+     */
     template<typename Ti>
     friend std::ostream& operator<<(std::ostream& os, Vector<Ti> const& op);
-
+    
+    /**
+     * @brief Parse vector from a file
+     * 
+     * @tparam Ti 
+     * @param is 
+     * @param op 
+     * @return std::istream& 
+     */
     template<typename Ti>
     friend std::istream& operator>>(std::istream& is, Vector<Ti>& op);
 
-
-
+    /**
+     * @brief Set the epsilon tresh object
+     * 
+     * @param op 
+     */
     void set_epsilon_tresh(double& op) {
         epsilon_tresh = op;
     }
 
+    /**
+     * @brief Set the length object
+     * 
+     * @param op 
+     */
     void set_length(unsigned long long& op) {
         length = op;
     }
 
+    /**
+     * @brief Get the epsilon tresh object
+     * 
+     * @return double 
+     */
     double get_epsilon_tresh() {
         return epsilon_tresh;
     }
 
+    /**
+     * @brief Get the length object
+     * 
+     * @return unsigned long long 
+     */
     unsigned long long get_length() {
         return length;
     }
 
+    /**
+     * @brief Convert vector to a string
+     * 
+     * @return std::string 
+     */
     std::string to_string() const {
         std::stringstream ss;
         ss << "vector \t" << typeid(T).name() << " \t" << length << "\n";
@@ -87,8 +125,16 @@ public:
 
 private:
 
+    /**
+     * @brief The treshhold, that limits miserability of matrix element
+     * 
+     */
     double epsilon_tresh;
 
+    /**
+     * @brief The treshhold, that limits miserability of matrix element
+     * Default version
+     */
     static constexpr double default_epsilon_tresh = 0.000001;
 
     /**
