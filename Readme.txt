@@ -1,1 +1,1 @@
-This is readme for task 1
+This is a project containing simple C++ lib, featuring custom Rational numbers, Vectors and Matrices.
